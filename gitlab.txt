@@ -1,0 +1,70 @@
+Requirement: Create account on gitlab.com.
+
+Install and configure gitlab runner
+============================================
+
+Step1: Install GitLab Runner: (ON CENTOS1 MACHINE WHERE ANSIBLE IS INSTALLED)
+
+Open firefox -> search on google "install gitlab runner" -> open first link -> in repositories click on the link -> follow the instructions for installation.
+
+Step 2: Create project and copy runner details (ON GITLAB.COM):
+
+Go to gitlab.com -> create a project -> create blank project:
+	name: first-project
+	untick initialize readme
+	create project
+
+Go to settings -> CI/CD -> Runners:
+	Copy URL and Registration TOKEN (We will use to register gitlab runner)
+
+Step 3: Register Gitlab Runner: (ON CENTOS1 MACHINE)
+
+Register Runner:
+	#gitlab-runner register
+	GitLab URL: <PASTE URL WHICH YOU HAVE COPIED EARLIER>
+	Registration TOKEN: <PASTE TOKEN WHICH YOU HAVE COPIED EARLIER>
+	Description: PRESS ENTER
+	Enter Tags: devops
+	Executor: shell
+
+Step 4: Give permission to gitlab-runner user (ON CENTOS1 MACHINE):
+
+#visudo
+gitlab-runner ALL=(ALL) NOPASSWD: ALL
+
+Step 5: Verify: (GITLAB.COM)
+
+Go to your project settings -> CI/CD -> Runners -> HERE WE WILL SEE OUR RUNNER
+
+
+Demo - Build First Job
+=====================================
+Step 1: Create .gitlab-ci.yml file and send to gitlab.com (Go to your Windows system OR DC WINDOWS MACHINE):
+
+#mkdir myproject
+#cd myproject
+#vim .gitlab-ci.yml
+create file with data:
+ tags: 
+ - devops
+ script:
+ - sudo mkdir /gitlab/
+ - sudo chmod 777 /gitlab/
+ - sudo echo "HEY I AM RUNNING" >> /gitlab/file1.txt
+ - sudo echo "HEY AUTOMATION ENGINEER" >> /gitlab/file2.txt
+
+#git init
+#git add .
+#git commit -a -m "first commit"
+#git remote add origin <YOUR GITLAB REPOSITORY URL>
+#git push origin master
+
+Step 2: Verify: GO TO GITLAB.COM AND CHECK YOUR REPOSITORY, WE WILL SEE PIPELINE STARTED CHECK PIPELINE.
+
+Step 3: Verify File is Created Or Not (ON CENTOS1 MACHINE)
+
+#ls /gitlab/
+#cat /gitlab/file1.txt
+#cat /gitlab/file2.txt
+
+Now anytime we will change anything it will execute automatically.
